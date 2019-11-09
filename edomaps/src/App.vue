@@ -2,6 +2,7 @@
   <div id="app">
     <!-- This is a sample page with a sample embedding -->
     <!-- <h1>Map of Japan, Edo period</h1> -->
+    <Navbar/>
     <b-container class="bv-example-row">
       <b-row>
         <Navbar/>
@@ -11,11 +12,9 @@
         <b-col><LeftColumn/></b-col>
         <b-col cols="9"><web-map/></b-col>
       </b-row>
-
-      <b-row>
-        <b-col>Footer?</b-col>
-      </b-row>
     </b-container>
+
+
   </div>
 </template>
 
@@ -58,10 +57,9 @@ export default {
 }
 
 #body {
-  padding-top: 60px;
+  padding-top: 80px;
   margin: 0;
-  padding: 0;
-  height: 100%;
+  height: 100vh;
   width: 100%;
 }
 </style>
