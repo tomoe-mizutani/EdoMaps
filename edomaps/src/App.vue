@@ -1,43 +1,54 @@
 <template>
   <div id="app">
     <!-- This is a sample page with a sample embedding -->
-    <h1>Map of Japan, Edo period</h1>
-    <div class="embed-container"><small><a href="//yalemaps.maps.arcgis.com/apps/Embed/index.html?webmap=99b82cf066904c2d8cd2eeac13856609&extent=-132.3413,20.4201,-46.2085,58.0972&home=true&zoom=true&scale=true&search=true&searchextent=true&details=true&legendlayers=true&active_panel=details&disable_scroll=true&theme=light" style="color:#0000FF;text-align:left" target="_blank">View larger map</a></small><br><iframe width="500" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" title="Something" src="//yalemaps.maps.arcgis.com/apps/Embed/index.html?webmap=99b82cf066904c2d8cd2eeac13856609&extent=-132.3413,20.4201,-46.2085,58.0972&home=true&zoom=true&previewImage=false&scale=true&search=true&searchextent=true&details=true&legendlayers=true&active_panel=details&disable_scroll=true&theme=light"></iframe></div>
+    <!-- <h1>Map of Japan, Edo period</h1> -->
+    <b-container class="bv-example-row">
+      <b-row>
+        <Navbar/>
+      </b-row>
+
+      <b-row id="body">
+        <b-col><LeftColumn/></b-col>
+        <b-col cols="9">Map content here.</b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>Footer?</b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
+import BootstrapVue from 'bootstrap-vue'
+import Navbar from "./components/Navbar.vue";
+import LeftColumn from "./components/LeftColumn.vue";
+Vue.use(BootstrapVue)
+
 export default {
   name: 'app',
   components: {
+    Navbar,
+    LeftColumn
   }
 }
 </script>
 
-<style>
+<style lang="scss">
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap-vue/src/index.scss';
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
   align: center;
 }
 
-.embed-container {
-  position: relative;
-  padding-bottom: 80%;
-  height: 0;
-  max-width: 70%;
-  margin-left: auto;
-  margin-right: auto;
+#body {
+  padding-top: 60px;
 }
-.embed-container iframe, .embed-container object,
-.embed-container iframe{
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-}
-small{position: absolute; z-index: 40; bottom: 0; margin-bottom: -15px;}
 </style>
