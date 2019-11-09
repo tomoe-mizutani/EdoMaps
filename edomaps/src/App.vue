@@ -9,7 +9,7 @@
 
       <b-row id="body">
         <b-col><LeftColumn/></b-col>
-        <b-col cols="9">Map content here.</b-col>
+        <b-col cols="9"><web-map/></b-col>
       </b-row>
 
       <b-row>
@@ -20,15 +20,18 @@
 </template>
 
 <script>
+
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import Navbar from "./components/Navbar.vue";
 import LeftColumn from "./components/LeftColumn.vue";
+import WebMap from './components/WebMap.vue';
 Vue.use(BootstrapVue)
 
 export default {
   name: 'app',
   components: {
+    WebMap,
     Navbar,
     LeftColumn
   }
@@ -40,6 +43,12 @@ export default {
 @import 'node_modules/bootstrap-vue/src/index.scss';
 
 #app {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -50,5 +59,9 @@ export default {
 
 #body {
   padding-top: 60px;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
 }
 </style>
