@@ -3,16 +3,24 @@
     <!-- This is a sample page with a sample embedding -->
     <!-- <h1>Map of Japan, Edo period</h1> -->
     <Navbar/>
-    <b-container class="bv-example-row">
+
+
+    <div id="map">
+      <web-map/>
+    </div>
+
+
+    <!-- <b-container class="bv-example-row">
       <b-row>
         <Navbar/>
       </b-row>
 
       <b-row id="body">
+        <web-map/>
         <b-col><LeftColumn/></b-col>
-        <b-col cols="9"><web-map/></b-col>
-      </b-row>
-    </b-container>
+        <b-col cols="9"><web-map/></b-col> -->
+      <!-- </b-row>
+    </b-container> -->
 
 
   </div>
@@ -23,7 +31,6 @@
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import Navbar from "./components/Navbar.vue";
-import LeftColumn from "./components/LeftColumn.vue";
 import WebMap from './components/WebMap.vue';
 Vue.use(BootstrapVue)
 
@@ -32,7 +39,6 @@ export default {
   components: {
     WebMap,
     Navbar,
-    LeftColumn
   }
 }
 </script>
@@ -56,10 +62,8 @@ export default {
   align: center;
 }
 
-#body {
-  padding-top: 80px;
-  margin: 0;
-  height: 100vh;
-  width: 100%;
+#map {
+  padding-top: 48px;
+  height: 100vh
 }
 </style>
