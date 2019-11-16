@@ -1,7 +1,7 @@
 <template>
   <div>
   <b-navbar type="dark" variant="dark" class="header" fixed="top">
-    <b-navbar-brand href="#">Title of Project</b-navbar-brand>
+    <b-navbar-brand href="#">Edo Maps</b-navbar-brand>
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-nav>
         <b-nav-item href="#">Link</b-nav-item>
