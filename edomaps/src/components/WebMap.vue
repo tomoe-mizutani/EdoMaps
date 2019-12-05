@@ -18,7 +18,7 @@ export default {
       "esri/widgets/Legend",
       "esri/widgets/Search",
       "esri/widgets/Expand",
-      "esri/widgets/BasemapGallery"
+      "esri/widgets/BasemapGallery",
       ], { css: true })
     .then(([ArcGISMap, MapView, FeatureLayer, TimeSlider, LayerList, Legend, Search, Expand, BasemapGallery]) => {
       const map = new ArcGISMap({
@@ -58,6 +58,15 @@ export default {
       var villages_to_domains = new FeatureLayer({
         url:
           "https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/Files_v4/FeatureServer/4?token=mmhhlZVuoCbYWtcVWcZ9AYOUdbomDLEBhIhLba3oMmu6qJx33R8bw-dH2d0f9W7XASmknv6VeIo4DSAvo9E2gRmaqqPxEljkvyf8ZQBRzOXeop6IruZkCdKvzIIX-QhISsuM7fNoztJbdYpnAL-Q2Au9F37giFIxaI1Z6BHG0kDLb9jUphpqxgVeNd5FOkzgogGuhIPBh8-AMTQ8RcsKHCQkxNbVG3GJZsXBMWmi1uqd4ndGnsR0Pn5riTgZEYV-",
+        symbol: {
+          type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+          color: [51, 51, 204, 0.9],
+          style: "solid",
+          outline: {  // autocasts as new SimpleLineSymbol()
+            color: "black",
+            width: 1
+          }
+        }
       });
       map.layers.add(villages_to_domains);
 
@@ -83,8 +92,8 @@ export default {
       let uncertain_belonging = new FeatureLayer({
         url:
           "https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/overlays/FeatureServer/1?token=3ATb8VJxlM0Q0foAtMo0hpIGD5xuQWrlXNrCpMvc7AaOCVdVe6sG8bV55FBh-d7c5lzD9V9IzSiN6dP7-_F8Drn5cfLXVTsnbP6CRLut0Y1HpPAh-8Huba426E6NDtS7R-54pvPD-aLKRJdW2iayTIyIv4qShZkp1PmP8Ao_gP_SV2Qi3sh8Ef4ueHgD-tjOTruOYTJb3u9IsJCldmqNHOEswwxMPsRYjtqCFi-6HsTPfW-j0vDQIPgEw81TZyza",
-          outfields: ["*"],
-          popupTemplate: popupUncertainBelongings
+        outfields: ["*"],
+        popupTemplate: popupUncertainBelongings,
       })
       map.layers.add(uncertain_belonging)
 
@@ -101,8 +110,8 @@ export default {
       let boundary_changes = new FeatureLayer({
         url:
           "https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/overlays/FeatureServer/0?token=3ATb8VJxlM0Q0foAtMo0hpIGD5xuQWrlXNrCpMvc7AaOCVdVe6sG8bV55FBh-d7c5lzD9V9IzSiN6dP7-_F8Drn5cfLXVTsnbP6CRLut0Y1HpPAh-8Huba426E6NDtS7R-54pvPD-aLKRJdW2iayTIyIv4qShZkp1PmP8Ao_gP_SV2Qi3sh8Ef4ueHgD-tjOTruOYTJb3u9IsJCldmqNHOEswwxMPsRYjtqCFi-6HsTPfW-j0vDQIPgEw81TZyza",
-          outfields: ["*"],
-          popupTemplate: boundaryChangePopup
+        outfields: ["*"],
+        popupTemplate: boundaryChangePopup,
       })
       map.layers.add(boundary_changes)
 
