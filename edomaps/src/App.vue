@@ -1,28 +1,9 @@
 <template>
   <div id="app">
-    <!-- This is a sample page with a sample embedding -->
-    <!-- <h1>Map of Japan, Edo period</h1> -->
     <Navbar/>
-
-
     <div id="map">
       <web-map/>
     </div>
-
-
-    <!-- <b-container class="bv-example-row">
-      <b-row>
-        <Navbar/>
-      </b-row>
-
-      <b-row id="body">
-        <web-map/>
-        <b-col><LeftColumn/></b-col>
-        <b-col cols="9"><web-map/></b-col> -->
-      <!-- </b-row>
-    </b-container> -->
-
-
   </div>
 </template>
 
