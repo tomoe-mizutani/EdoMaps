@@ -78,7 +78,7 @@ export default {
         popupTemplate: popupVillages
       });
       map.layers.add(villages_to_gun);
-      
+
       // Create a popup template for uncertain belongings
       let popupUncertainBelongings = {
         "title": "Uncertain Belonging",
@@ -139,7 +139,7 @@ export default {
       });
 
 
-      /******************************************************************************************** 
+      /********************************************************************************************
        * BOTTOM RIGHT WIDGETS
       *********************************************************************************************/
       let legendExpand = new Expand({
@@ -153,12 +153,12 @@ export default {
                                 layer: villages_to_domains, gun,
                                 title: "Domains"
                               }]}),
-        });        
+        });
 
       // Add bottom right widgets to UI
       this.view.ui.add([legendExpand], "bottom-right")
-      
-      /******************************************************************************************** 
+
+      /********************************************************************************************
        * TOP RIGHT WIDGETS
       *********************************************************************************************/
 
@@ -185,7 +185,7 @@ export default {
           {
             layer: villages_to_gun,
             searchFields: ["fukuivil_2", "fukuivil_1"],
-            suggestionTemplate: "name: {fukuivil_2}<br> id: {fukuivil_1}",
+            suggestionTemplate: "name: {fukuivil_2}<br> {fukuivil_3}-{fukuivil_4}",
             exactMatch: false,
             outFields: ["*"],
             placeholder: "Search Villages to Gun",
