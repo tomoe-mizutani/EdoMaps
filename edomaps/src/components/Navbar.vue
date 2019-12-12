@@ -9,17 +9,12 @@
         <b-nav-item href="#">Contact</b-nav-item>
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto">
-        <b-nav-item v-b-modal.modal-1>Settings</b-nav-item>
+        <b-nav-item href="#">EN / JP</b-nav-item>
+        <b-nav-item v-b-modal.modal-lg>Settings</b-nav-item>
       </b-navbar-nav>
     </b-collapse>
   </b-navbar>
-  <b-modal id="modal-1" title="Advanced Settings">
-    <b-card title="Language">
-      <b-form-group>
-        <b-form-radio v-model="selected" name="some-radios" value="A">English</b-form-radio>
-        <b-form-radio v-model="selected" name="some-radios" value="B">Japanese</b-form-radio>
-      </b-form-group>
-    </b-card>
+  <b-modal id="modal-lg" size="lg" title="Advanced Settings">
     <b-card title="Uncertainties">
       <p>Select which domain to prioritize when ownership is uncertain.</p>
       <b-form-group>

@@ -19,8 +19,9 @@ export default {
       "esri/widgets/Search",
       "esri/widgets/Expand",
       "esri/widgets/BasemapGallery",
+      "esri/widgets/Print",
       ], { css: true })
-    .then(([ArcGISMap, MapView, FeatureLayer, TimeSlider, LayerList, Legend, Search, Expand, BasemapGallery]) => {
+    .then(([ArcGISMap, MapView, FeatureLayer, TimeSlider, LayerList, Legend, Search, Expand, BasemapGallery, Print]) => {
       const map = new ArcGISMap({
         basemap: 'gray-vector'
       });
@@ -97,9 +98,62 @@ export default {
       })
       map.layers.add(uncertain_belonging)
 
-      // Crete a popup template for uncertain belongings
+      /* =====================================================================================================
+                                  CODE TO FOR CROSS HATCHING TO WORK
+      =======================================================================================================*/
+
+      // Symbol for FUKUI / OONO
+      const FukuiOono = {
+        type: "picture-fill",
+        url: "http://localhost:3000/red_yellow.jpg",
+        width: 500,
+        height: 500
+      };
+
+      // Symbol for SABE / FUKUI
+      const SabaeFukui = {
+        type: "picture-fill",
+        url: "http://localhost:3000/red_green.jpg",
+        width: 500,
+        height: 500
+      };
+
+      // Symbol for all others
+      const otherSym = {
+        type: "simple-fill",
+        // style: "square",
+        // size: 18,
+        color: [26, 26, 26, 1]
+      };
+
+      // Create a renderer to render specific symbols on top of Boundaries layer
+      const boundaryRenderer = {
+        type: "unique-value", // autocasts as new UniqueValueRenderer()
+        legendOptions: {
+          title: "Uncertanties:"
+        },
+        defaultSymbol: otherSym,
+        defaultLabel: "DEFAULT LABEL",
+        field: "changefr_2",
+        field2: "changetoDo",
+        fieldDelimiter: ", ",
+        uniqueValueInfos: [
+          {
+            value: "Fukui, Oono", // code for fukui to oono boundaries
+            symbol: FukuiOono,
+            label: "Fukui to Oono"
+          },
+          {
+            value: "Sabae, Fukui", // code for sabae to fukui boundaries
+            symbol: SabaeFukui,
+            label: "Sabae to Fukui"
+          }
+        ]
+      };
+
+      // Crete a popup template for uncertain boundaries
       let boundaryChangePopup = {
-        "title": "Uncertain Belonging",
+        "title": "Boundary Change",
         "content": "<b>Change From 2:</b> {changefr_2}<br>\
                     <b>Change To Do:</b> {changetoDo}<br>\
                     <b>Start Valid:</b> {START_vali}<br>\
@@ -110,10 +164,15 @@ export default {
       let boundary_changes = new FeatureLayer({
         url:
           "https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/overlays/FeatureServer/0?token=3ATb8VJxlM0Q0foAtMo0hpIGD5xuQWrlXNrCpMvc7AaOCVdVe6sG8bV55FBh-d7c5lzD9V9IzSiN6dP7-_F8Drn5cfLXVTsnbP6CRLut0Y1HpPAh-8Huba426E6NDtS7R-54pvPD-aLKRJdW2iayTIyIv4qShZkp1PmP8Ao_gP_SV2Qi3sh8Ef4ueHgD-tjOTruOYTJb3u9IsJCldmqNHOEswwxMPsRYjtqCFi-6HsTPfW-j0vDQIPgEw81TZyza",
+        renderer: boundaryRenderer,
         outfields: ["*"],
         popupTemplate: boundaryChangePopup,
       })
       map.layers.add(boundary_changes)
+
+      /* =====================================================================================================
+                                  END OF CODE FOR CROboSS HATCHING
+      =======================================================================================================*/
 
       // Add the time slider widget
       const timeSlider = new TimeSlider({
@@ -142,6 +201,8 @@ export default {
       /********************************************************************************************
        * BOTTOM RIGHT WIDGETS
       *********************************************************************************************/
+
+      // LEGEND WIDGET
       let legendExpand = new Expand({
         view: this.view,
         expandIconClass: "esri-icon-polygon",  // see https://developers.arcgis.com/javascript/latest/guide/esri-icon-font/
@@ -155,8 +216,21 @@ export default {
                               }]}),
         });
 
+      // EXPORT WIDGET
+      let exportExpand = new Expand({
+        view: this.view,
+        expandIconClass: "esri-icon-printer",  // see https://developers.arcgis.com/javascript/latest/guide/esri-icon-font/
+        expandTooltip: "Export Map", // optional, defaults to "Expand" for English locale
+        group: "bottom-right",
+        content: new Print({
+        view: this.view,
+        printServiceUrl:
+              "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+        })
+      });
+
       // Add bottom right widgets to UI
-      this.view.ui.add([legendExpand], "bottom-right")
+      this.view.ui.add([legendExpand, exportExpand], "bottom-right")
 
       /********************************************************************************************
        * TOP RIGHT WIDGETS
@@ -167,6 +241,7 @@ export default {
         view: this.view,
         allPlaceholder: "Search Gun / Village / Kuni",
         includeDefaultSources: false,
+        group: "top-right",
         // autoSelect: false,
         // suggestionsEnabled: false,
         sources: [
@@ -224,9 +299,6 @@ export default {
 
       }
 
-      // Add search widget to the top of the top-right portion of UI
-      this.view.ui.add(searchWidget, "top-right");
-
       // Create other Expandable widgets
       let basemapExpand = new Expand({
         view: this.view,
@@ -253,7 +325,7 @@ export default {
                               }),
       });
 
-      this.view.ui.add([layerListExpand, basemapExpand], "top-right");
+      this.view.ui.add([searchWidget, layerListExpand, basemapExpand], "top-right");
 
     });
   },
