@@ -1,12 +1,25 @@
 <template>
-  <div id="viewDiv"></div>
+  <div id="viewDiv">
+    <screenshot :view="view" />
+  </div>
 </template>
 
 <script>
+
 import { loadModules } from 'esri-loader';
+import Screenshot from './Screenshot.vue';
 
 export default {
   name: 'web-map',
+  components: {
+    Screenshot, 
+  },
+  data(){
+    return{
+      view: null,
+      isMounted: false,
+    }
+  },
   mounted() {
     // lazy load the required ArcGIS API for JavaScript modules and CSS
     loadModules([
@@ -20,8 +33,9 @@ export default {
       "esri/widgets/Expand",
       "esri/widgets/BasemapGallery",
       "esri/widgets/Print",
+      "esri/widgets/Print/TemplateOptions",
       ], { css: true })
-    .then(([ArcGISMap, MapView, FeatureLayer, TimeSlider, LayerList, Legend, Search, Expand, BasemapGallery, Print]) => {
+    .then(([ArcGISMap, MapView, FeatureLayer, TimeSlider, LayerList, Legend, Search, Expand, BasemapGallery, Print, TemplateOptions]) => {
       const map = new ArcGISMap({
         basemap: 'gray-vector'
       });
@@ -31,8 +45,10 @@ export default {
         container: this.$el,
         map: map,
         center: [139.691706, 35.689487],
-        zoom: 6
+        zoom: 6,
+        // scale: 4155583.4197442674,
       });
+
 
 
       // Add Gun Layer
@@ -173,7 +189,7 @@ export default {
       /* =====================================================================================================
                                   END OF CODE FOR CROboSS HATCHING
       =======================================================================================================*/
-
+    
       // Add the time slider widget
       const timeSlider = new TimeSlider({
         container: "timeSlider",
@@ -193,17 +209,24 @@ export default {
           interval: {
             value: 1,
             unit: "years"
-          }
+          },
         };
+        timeSlider.values =  [
+          new Date(1700, 0, 1) // Initialize the current time for the beginning of the fullTimeExtent.
+        ]
       });
 
+      // // watch current time
+      // timeSlider.watch("values", function(values){
+      //   console.log("The current time is: ", values[0]);
+      // });
 
       /********************************************************************************************
        * BOTTOM RIGHT WIDGETS
       *********************************************************************************************/
 
       // LEGEND WIDGET
-      let legendExpand = new Expand({
+      this.legendExpand = new Expand({
         view: this.view,
         expandIconClass: "esri-icon-polygon",  // see https://developers.arcgis.com/javascript/latest/guide/esri-icon-font/
         expandTooltip: "View Legend", // optional, defaults to "Expand" for English locale
@@ -215,22 +238,51 @@ export default {
                                 title: "Domains"
                               }]}),
         });
-
+  
       // EXPORT WIDGET
+      // let printTemplate = new printTemplate({
+      //   layoutOptions: {
+      //     titleText: "My Print",
+      //     authorText: "Sam",
+      //     copyrightText: "My Company",
+      //     scalebarUnit: "Miles",
+      //     // the following text elements must
+      //     // exist in the print service to appear
+      //     customTextElements: [
+      //       {"description": "My description"},
+      //       {"location": "My Location"},
+      //       {"date": "11/11/2020, 11:11:20 AM"}
+      //     ]
+      //   }
+      // });
       let exportExpand = new Expand({
         view: this.view,
         expandIconClass: "esri-icon-printer",  // see https://developers.arcgis.com/javascript/latest/guide/esri-icon-font/
         expandTooltip: "Export Map", // optional, defaults to "Expand" for English locale
         group: "bottom-right",
         content: new Print({
-        view: this.view,
-        printServiceUrl:
-              "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
-        })
+          view: this.view,
+          templateOptions: new TemplateOptions({
+            title: "My Print",
+            author: "Sam",
+            copyright: "My Company",
+            legendEnabled: true
+            // the following text elements must
+            // exist in the print service to appear
+            // customTextElements: [
+            //   {"description": "My description"},
+            //   {"location": "My Location"},
+            //   {"date": "11/11/2020, 11:11:20 AM"}
+            // ]
+          }),
+          printServiceUrl:
+                "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+          })
       });
 
       // Add bottom right widgets to UI
-      this.view.ui.add([legendExpand, exportExpand], "bottom-right")
+      this.view.ui.add([this.legendExpand, exportExpand], "bottom-right")
+      // this.legends = legendExpand
 
       /********************************************************************************************
        * TOP RIGHT WIDGETS
@@ -326,8 +378,39 @@ export default {
       });
 
       this.view.ui.add([searchWidget, layerListExpand, basemapExpand], "top-right");
+      
 
+      // TEST CODE //
+      var data = new URLSearchParams();
+      data.append('Web_Map_as_JSON', JSON.stringify({"operationalLayers":[{"type":"VectorTileLayer","styleUrl":"https://www.arcgis.com/sharing/rest/content/items/8a2cba3b0ebf4140b7c0dc5ee149549a/resources/styles/root.json","id":"gray-base-layer","title":"World Light Gray","opacity":1,"minScale":0,"maxScale":0},{"url":"https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/Files_v4/FeatureServer/3","id":"1706e5bdfb5-layer-5","title":"Files v4 - Gun","showLabels":true,"opacity":1,"minScale":0,"maxScale":0},{"url":"https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/Files_v4/FeatureServer/4","id":"1706e5bdfb5-layer-6","opacity":0.8,"title":"Files v4 - Villages to domains","showLabels":true,"minScale":0,"maxScale":0},{"url":"https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/overlays/FeatureServer/1","id":"1706e5bdfb5-layer-8","title":"Overlays - Uncertainbelonging","showLabels":true,"opacity":1,"minScale":0,"maxScale":0},{"url":"https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/overlays/FeatureServer/0","id":"1706e5bdfb5-layer-9","title":"Overlays - Boundarychanges","layerDefinition":{"drawingInfo":{"renderer":{"type":"uniqueValue","field1":"changefr_2","field2":"changetoDo","legendOptions":{"title":"Uncertanties:"},"defaultLabel":"DEFAULT LABEL","defaultSymbol":{"type":"esriSFS","color":[26,26,26,255],"outline":{"type":"esriSLS","color":[0,0,0,255],"width":0.75,"style":"esriSLSSolid"},"style":"esriSFSSolid"},"fieldDelimiter":", ","uniqueValueInfos":[{"label":"Fukui to Oono","symbol":{"type":"esriPFS","color":[0,0,0,255],"url":"http://localhost:3000/red_yellow.jpg","xscale":1,"yscale":1,"width":500,"height":500,"xoffset":0,"yoffset":0},"value":"Fukui, Oono"},{"label":"Sabae to Fukui","symbol":{"type":"esriPFS","color":[0,0,0,255],"url":"http://localhost:3000/red_green.jpg","xscale":1,"yscale":1,"width":500,"height":500,"xoffset":0,"yoffset":0},"value":"Sabae, Fukui"}]}}},"showLabels":true,"opacity":1,"minScale":0,"maxScale":0}],"mapOptions":{"extent":{"spatialReference":{"latestWkid":3857,"wkid":102100},"xmin":14975258.010328524,"ymin":4223777.491982939,"xmax":15205181.051256388,"ymax":4429546.383664394},"spatialReference":{"latestWkid":3857,"wkid":102100},"showAttribution":true,"scale":1155583.4197442674,"time": [-8488800000000]},"exportOptions":{"dpi":96},"layoutOptions":{"titleText":"My Print","authorText":"Sam","copyrightText":"My Company","scaleBarOptions":{},"legendOptions":{"operationalLayers":[{"id":"1706e5bdfb5-layer-5"},{"id":"1706e5bdfb5-layer-6"},{"id":"1706e5bdfb5-layer-8"},{"id":"1706e5bdfb5-layer-9"}]}}}))
+      data.append('Format', 'PDF')
+      data.append('Layout_Template', 'Letter ANSI A Landscape')
+      data.append('returnFeatureCollection', 'false')
+      data.append('returnM', 'false')
+      data.append('returnZ', 'false')
+      data.append('f', 'json')
+
+      var url = "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task/execute"
+      // formData = JSON.stringify({"Web_Map_as_JSON":{"operationalLayers":[{"type":"VectorTileLayer","styleUrl":"https://www.arcgis.com/sharing/rest/content/items/8a2cba3b0ebf4140b7c0dc5ee149549a/resources/styles/root.json","id":"gray-base-layer","title":"World Light Gray","opacity":1,"minScale":0,"maxScale":0},{"url":"https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/Files_v4/FeatureServer/3","id":"1706e5bdfb5-layer-5","title":"Files v4 - Gun","showLabels":true,"opacity":1,"minScale":0,"maxScale":0},{"url":"https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/Files_v4/FeatureServer/4","id":"1706e5bdfb5-layer-6","opacity":0.8,"title":"Files v4 - Villages to domains","showLabels":true,"minScale":0,"maxScale":0},{"url":"https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/overlays/FeatureServer/1","id":"1706e5bdfb5-layer-8","title":"Overlays - Uncertainbelonging","showLabels":true,"opacity":1,"minScale":0,"maxScale":0},{"url":"https://services1.arcgis.com/7uJv7I3kgh2y7Pe0/arcgis/rest/services/overlays/FeatureServer/0","id":"1706e5bdfb5-layer-9","title":"Overlays - Boundarychanges","layerDefinition":{"drawingInfo":{"renderer":{"type":"uniqueValue","field1":"changefr_2","field2":"changetoDo","legendOptions":{"title":"Uncertanties:"},"defaultLabel":"DEFAULT LABEL","defaultSymbol":{"type":"esriSFS","color":[26,26,26,255],"outline":{"type":"esriSLS","color":[0,0,0,255],"width":0.75,"style":"esriSLSSolid"},"style":"esriSFSSolid"},"fieldDelimiter":", ","uniqueValueInfos":[{"label":"Fukui to Oono","symbol":{"type":"esriPFS","color":[0,0,0,255],"url":"http://localhost:3000/red_yellow.jpg","xscale":1,"yscale":1,"width":500,"height":500,"xoffset":0,"yoffset":0},"value":"Fukui, Oono"},{"label":"Sabae to Fukui","symbol":{"type":"esriPFS","color":[0,0,0,255],"url":"http://localhost:3000/red_green.jpg","xscale":1,"yscale":1,"width":500,"height":500,"xoffset":0,"yoffset":0},"value":"Sabae, Fukui"}]}}},"showLabels":true,"opacity":1,"minScale":0,"maxScale":0}],"mapOptions":{"extent":{"spatialReference":{"latestWkid":3857,"wkid":102100},"xmin":14975258.010328524,"ymin":4223777.491982939,"xmax":15205181.051256388,"ymax":4429546.383664394},"spatialReference":{"latestWkid":3857,"wkid":102100},"showAttribution":true,"scale":1155583.4197442674},"exportOptions":{"dpi":96},"layoutOptions":{"titleText":"My Print","authorText":"Sam","copyrightText":"My Company","scaleBarOptions":{},"legendOptions":{"operationalLayers":[{"id":"1706e5bdfb5-layer-5"},{"id":"1706e5bdfb5-layer-6"},{"id":"1706e5bdfb5-layer-8"},{"id":"1706e5bdfb5-layer-9"}]}}}})
+      
+      fetch(url, {
+        method: 'POST',
+        body: data,
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((myJson) => {
+        console.log(myJson);
+        console.log(myJson.results[0].value.url);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+      this.isMounted = true;
     });
+    
   },
   beforeDestroy() {
     if (this.view) {
@@ -340,6 +423,13 @@ export default {
 </script>
 
 <style scoped>
+#map {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
 #viewDiv {
   padding: 0;
   margin: 0;

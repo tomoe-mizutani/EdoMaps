@@ -13,6 +13,7 @@ import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import Navbar from "./components/Navbar.vue";
 import WebMap from './components/WebMap.vue';
+
 Vue.use(BootstrapVue)
 
 export default {
